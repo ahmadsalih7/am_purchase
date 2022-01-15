@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="am_purchase.list">
+      <field name="name">am_purchase list</field>
+      <field name="model">am_purchase.am_purchase</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="am_purchase.action_window">
+      <field name="name">am_purchase window</field>
+      <field name="res_model">am_purchase.am_purchase</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="am_purchase.action_server">
+      <field name="name">am_purchase server</field>
+      <field name="model_id" ref="model_am_purchase_am_purchase"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="am_purchase" id="am_purchase.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="am_purchase.menu_1" parent="am_purchase.menu_root"/>
+    <menuitem name="Menu 2" id="am_purchase.menu_2" parent="am_purchase.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="am_purchase.menu_1_list" parent="am_purchase.menu_1"
+              action="am_purchase.action_window"/>
+    <menuitem name="Server to list" id="am_purchase" parent="am_purchase.menu_2"
+              action="am_purchase.action_server"/>
+-->
+  </data>
+</odoo>
