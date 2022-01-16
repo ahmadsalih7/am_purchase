@@ -52,6 +52,36 @@
                             <field name="date_approve" attrs="{'invisible': [('state','not in',('purchase','done'))]}"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Products">
+                            <field name="order_line"
+                                   mode="tree"
+                                   context="{'default_state': 'draft'}"
+                                   attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+                                <tree string="Purchase Order Lines" editable="bottom">
+
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="state" invisible="1" readonly="1"/>
+                                    <field name="product_type" invisible="1"/>
+                                    <field name="invoice_lines" invisible="1"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field
+                                            name="product_id"
+                                            attrs="{
+                                            'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))],
+                                        }"
+                                            force_save="1"
+                                            domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False)]"/>
+                                    <field name="name"/>
+                                    <field name="date_planned" optional="hide"/>
+                                    <field name="product_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal"/>
+                                </tree>
+                            </field>
+
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
