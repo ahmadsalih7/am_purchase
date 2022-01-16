@@ -38,7 +38,13 @@ class PurchaseOrder(models.Model):
     order_line = fields.One2many('am_purchase.order.line', 'order_id', string='Order Lines',
                                  states={'cancel': [('readonly', True)], 'done': [('readonly', True)]}, copy=True)
     notes = fields.Text('Terms and Conditions')
-    amount_total = fields.Monetary(string='Total', store=True, readonly=True, currency_field='currency_id')
+    amount_total = fields.Monetary(string='Total', store=True, readonly=True, compute='_amount_all',
+                                   currency_field='currency_id')
+
+    @api.depends('order_line.price_subtotal')
+    def _amount_all(self):
+        total = sum([line.price_subtotal for line in self.order_line])
+        self.update({'amount_total': total})
 
 
 class PurchaseOrderLine(models.Model):
@@ -52,7 +58,7 @@ class PurchaseOrderLine(models.Model):
 
     name = fields.Text(string='Description', required=True)
     sequence = fields.Integer(string='Sequence', default=10)
-    product_qty = fields.Float(string='Quantity', digits='Product Unit of Measure', required=True)
+    product_qty = fields.Float(string='Quantity', digits='Product Unit of Measure', default=1.0, required=True)
     date_planned = fields.Datetime(string='Scheduled Date', index=True)
     company_id = fields.Many2one('res.company', related='order_id.company_id', string='Company', store=True,
                                  readonly=True)
@@ -69,3 +75,25 @@ class PurchaseOrderLine(models.Model):
     state = fields.Selection(related='order_id.state', store=True, readonly=False)
     invoice_lines = fields.One2many('myaccount.move.line', 'purchase_line_id', string="Bill Lines", readonly=True,
                                     copy=False)
+
+    # -----------------------------
+    # Helpers
+    # -----------------------------
+
+    @api.model
+    def _get_price_total_and_subtotal(self):
+        return {'price_subtotal': self.price_unit * self.product_qty}
+
+    # -----------------------------
+    # On change methods
+    # -----------------------------
+
+    @api.onchange('product_id')
+    def on_change_product_id(self):
+        self.price_unit = self.product_id.list_price
+        self.name = self.product_id.name
+
+    @api.onchange('product_qty', 'price_unit')
+    def _onchange_price_unit(self):
+        for line in self:
+            line.update(line._get_price_total_and_subtotal())
