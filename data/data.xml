@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+        <!-- Sequence for Purchase orders !-->
+        <record id="sequence_purchase_order" model="ir.sequence">
+            <field name="name">Purchase Orders</field>
+            <field name="code">purchase.order</field>
+            <field name="prefix">P</field>
+            <field name="padding">5</field>
+            <field eval="False" name="company_id"/>
+        </record>
+    </data>
+</odoo>

@@ -46,6 +46,16 @@ class PurchaseOrder(models.Model):
         total = sum([line.price_subtotal for line in self.order_line])
         self.update({'amount_total': total})
 
+    # -----------------------------
+    # Low level methods
+    # -----------------------------
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', 'New') == 'New':
+            vals['name'] = self.env['ir.sequence'].next_by_code('purchase.order') or '/'
+        return super(PurchaseOrder, self).create(vals)
+
 
 class PurchaseOrderLine(models.Model):
     _name = 'am_purchase.order.line'
