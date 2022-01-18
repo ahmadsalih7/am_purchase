@@ -41,6 +41,17 @@ class PurchaseOrder(models.Model):
     amount_total = fields.Monetary(string='Total', store=True, readonly=True, compute='_amount_all',
                                    currency_field='currency_id')
 
+    # -----------------------------
+    # helper methods
+    # -----------------------------
+
+    def button_confirm(self):
+        pass
+
+    # -----------------------------
+    # On change & on depends methods
+    # -----------------------------
+
     @api.depends('order_line.price_subtotal')
     def _amount_all(self):
         total = sum([line.price_subtotal for line in self.order_line])
