@@ -3,4 +3,8 @@
     <menuitem id="orders_menu" name="Orders" parent="am_purchase" sequence="1"/>
     <menuitem id="purchase_order_menu" name="Purchase Orders" parent="orders_menu" sequence="2"
               action="action_purchase_order"/>
+
+    <menuitem id="configurations_menu" name="Configurations" parent="am_purchase" sequence="100"/>
+    <menuitem id="purchase_settings_menu" name="Settings" parent="configurations_menu" sequence="10"
+              action="action_purchase_settings"/>
 </odoo>
