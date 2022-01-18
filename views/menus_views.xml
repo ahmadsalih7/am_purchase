@@ -1,5 +1,5 @@
 <odoo>
-    <menuitem id="am_purchase" name="Purchase" sequence="20"/>
+    <menuitem id="am_purchase" name="Purchase" sequence="20" web_icon="am_purchase,static/description/icon.png"/>
     <menuitem id="orders_menu" name="Orders" parent="am_purchase" sequence="1"/>
     <menuitem id="purchase_order_menu" name="Purchase Orders" parent="orders_menu" sequence="2"
               action="action_purchase_order"/>
