@@ -15,7 +15,7 @@
         'security/purchase_security.xml',
         'security/ir.model.access.csv',
         'data/data.xml',
-        'security/res_config_settings_views.xml',
+        'views/res_config_settings_views.xml',
         'views/purchase_views.xml',
         'views/menus_views.xml',
     ],

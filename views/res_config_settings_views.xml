@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.purchase</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Purchase" string="Purchase" data-key="am_purchase"
+                     groups="am_purchase.group_purchase_manager">
+                    <field name="po_double_validation" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <h2>Orders</h2>
+                    <div class="row mt16 o_settings_container" name="purchase_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="po_order_approval"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="po_order_approval"/>
+                                <div class="text-muted">
+                                    Request managers to approve orders above a minimum amount
+                                </div>
+                                <div class="content-group" attrs="{'invisible': [('po_order_approval', '=', False)]}">
+                                    <div class="row mt16">
+                                        <label for="po_double_validation_amount" class="col-lg-4 o_light_label"/>
+                                        <field name="po_double_validation_amount"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_purchase_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="res_config_settings_view_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'am_purchase'}</field>
+    </record>
+
+</odoo>
