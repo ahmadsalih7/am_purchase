@@ -44,9 +44,21 @@ class PurchaseOrder(models.Model):
     # -----------------------------
     # helper methods
     # -----------------------------
+    def button_approve(self):
+        self.write({'state': 'purchase', 'date_approve': fields.Datetime.now()})
 
     def button_confirm(self):
-        pass
+        for order in self:
+            if order.state not in ['draft', 'sent']:
+                continue
+            # Deal with double validation process
+            if order.company_id.po_double_validation == 'one_step' \
+                    or (order.company_id.po_double_validation == 'two_step' \
+                        and order.amount_total < self.env.company.po_double_validation_amount) \
+                    or order.user_has_groups('am_purchase.group_purchase_manager'):
+                order.button_approve()
+            else:
+                order.write({'state': 'to approve'})
 
     # -----------------------------
     # On change & on depends methods
