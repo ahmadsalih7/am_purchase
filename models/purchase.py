@@ -13,7 +13,16 @@ class PurchaseOrder(models.Model):
         company_id = self.env.context.get('force_company') or self.env.context.get('company_id') or self.env.company.id
         return self.env['res.company'].browse(company_id).currency_id
 
+    READONLY_STATES = {
+        'purchase': [('readonly', True)],
+        'done': [('readonly', True)],
+        'cancel': [('readonly', True)],
+    }
+
     name = fields.Char('Order Reference', required=True, copy=False, default='New')
+    origin = fields.Char('Source Document', copy=False,
+                         help="Reference of the document that generated this purchase order "
+                              "request (e.g. a purchase order)")
     partner_ref = fields.Char('Vendor Reference', copy=False)
     date_order = fields.Datetime('Order Date', required=True, copy=False,
                                  default=fields.Datetime.now)
