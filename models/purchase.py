@@ -101,6 +101,14 @@ class PurchaseOrderLine(models.Model):
     name = fields.Text(string='Description', required=True)
     sequence = fields.Integer(string='Sequence', default=10)
     product_qty = fields.Float(string='Quantity', digits='Product Unit of Measure', default=1.0, required=True)
+    qty_received_method = fields.Selection([('manual', 'Manual')], string="Received Qty Method",
+                                           compute='_compute_qty_received_method', store=True,
+                                           help="According to product configuration, the recieved quantity can be automatically computed by mechanism :\n"
+                                                "  - Manual: the quantity is set manually on the line\n"
+                                                "  - Stock Moves: the quantity comes from confirmed pickings\n")
+    qty_received_manual = fields.Float("Manual Received Qty", copy=False)
+    qty_received = fields.Float("Received Qty", compute='_compute_qty_received', inverse='_inverse_qty_received',
+                                compute_sudo=True, store=True, digits='Product Unit of Measure')
     date_planned = fields.Datetime(string='Scheduled Date', index=True)
     company_id = fields.Many2one('res.company', related='order_id.company_id', string='Company', store=True,
                                  readonly=True)
@@ -139,3 +147,35 @@ class PurchaseOrderLine(models.Model):
     def _onchange_price_unit(self):
         for line in self:
             line.update(line._get_price_total_and_subtotal())
+
+    # -----------------------------
+    # Compute methods
+    # -----------------------------
+
+    @api.depends('product_id')
+    def _compute_qty_received_method(self):
+        for line in self:
+            if line.product_id and line.product_id.type in ['consu', 'service']:
+                line.qty_received_method = 'manual'
+            else:
+                line.qty_received_method = False
+
+    @api.depends('qty_received_method', 'qty_received_manual')
+    def _compute_qty_received(self):
+        for line in self:
+            if line.qty_received_method == 'manual':
+                line.qty_received = line.qty_received_manual or 0.0
+            else:
+                line.qty_received = 0.0
+
+    @api.onchange('qty_received')
+    def _inverse_qty_received(self):
+        """ When writing on qty_received, if the value should be modify manually (`qty_received_method` = 'manual' only),
+            then we put the value in `qty_received_manual`. Otherwise, `qty_received_manual` should be False since the
+            received qty is automatically compute by other mecanisms.
+        """
+        for line in self:
+            if line.qty_received_method == 'manual':
+                line.qty_received_manual = line.qty_received
+            else:
+                line.qty_received_manual = 0.0
